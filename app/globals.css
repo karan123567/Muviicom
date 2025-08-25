@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@theme inline {
+  --animate-spotlight: spotlight 2s ease 0.75s 1 forwards;
+}
+
+@keyframes spotlight {
+  0% {
+    opacity: 0;
+    transform: translate(-72%, -62%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -40%) scale(1);
+  }
+}
+
+@keyframes neonPulse {
+  0% {
+    box-shadow: 0 0 10px #00f0ff, 0 0 20px #ff00e0;
+  }
+  50% {
+    box-shadow: 0 0 20px #ff00e0, 0 0 40px #00f0ff;
+  }
+  100% {
+    box-shadow: 0 0 10px #00f0ff, 0 0 20px #ff00e0;
+  }
+}
+
+@keyframes neonGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.4),
+      0 0 30px rgba(0, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.7), 0 0 40px rgba(0, 255, 255, 0.6),
+      0 0 60px rgba(0, 255, 255, 0.5);
+  }
+}
+
+.animate-neon {
+  animation: neonGlow 2s ease-in-out infinite;
+}
+
+@keyframes neonGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.4),
+      0 0 30px rgba(0, 255, 255, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.7), 0 0 40px rgba(0, 255, 255, 0.6),
+      0 0 60px rgba(0, 255, 255, 0.5);
+  }
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+.animate-pulse-slow {
+  animation: pulse-slow 2s infinite;
+}
+
+.animate-neon {
+  animation: neonGlow 2s ease-in-out infinite;
+}
+
+.neon-card:hover {
+  animation: neonGlow 2s ease-in-out infinite;
+}
+
+/* Tilt Effect */
+.tilt-effect {
+  perspective: 1000px;
+}
+.tilt-effect img {
+  transition: transform 0.3s;
+}
+.tilt-effect:hover img {
+  transform: rotateY(10deg) rotateX(5deg);
+}
+
+/* Remove extra spacing for hero/grid sections */
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  overflow: hidden;
+}
+.movies-grid {
+  gap: 1.5rem; /* Tailwind gap-6 equivalent */
+}
+.filter-buttons {
+  gap: 1rem; /* Tailwind gap-4 equivalent */
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
