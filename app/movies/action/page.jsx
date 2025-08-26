@@ -334,7 +334,7 @@ export default function ActionMoviesPage() {
       </div>
 
       {/* Movie Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 px-6 pb-20 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 px-6 pb-20 gap-6">
         {displayedMovies.map((movie) => (
           <Tilt key={movie._id} tiltMaxAngleX={10} tiltMaxAngleY={10}>
             <motion.div
@@ -350,8 +350,9 @@ export default function ActionMoviesPage() {
               <img
                 src={movie.posterUrl}
                 alt={movie.title}
-                className="rounded-xl w-full h-72 object-cover"
-              />
+                className="rounded-xl object-cover transition duration-500"
+              />"
+            
               <div className="absolute bottom-0 w-full bg-black/70 text-center py-2 opacity-0 group-hover:opacity-100 transition">
                 {movie.title}
               </div>

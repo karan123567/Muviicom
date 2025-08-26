@@ -4,57 +4,65 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import Tilt from "react-parallax-tilt";
 
-const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
-const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
-
 export default function CarMovies() {
   const [movies, setMovies] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(10); // "See More"
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const [cast, setCast] = useState([]);
+  const [filter, setFilter] = useState("all");
 
-  // Fetch Car-themed movies
+  // Filters (same button style as Horror page, but green theme)
+
+  // ---- Fetchers ----
+
   useEffect(() => {
-    async function fetchMovies() {
+    const fetchMovies = async () => {
       try {
-        const res = await axios.get(
-          `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_keywords=490&language=en-US&page=1`
-        );
-        setMovies(res.data.results);
-      } catch (error) {
-        console.error("Error fetching car movies:", error);
+        const res = await axios.get("/api/movies");
+        setMovies(res.data.data); // 👈 pick your "data"
+      } catch (err) {
+        console.error("Error fetching movies:", err.message);
       }
-    }
+    };
     fetchMovies();
   }, []);
 
-  // Fetch cast
-  async function fetchCast(movieId) {
-    try {
-      const res = await axios.get(
-        `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${API_KEY}`
-      );
-      setCast(res.data.cast.slice(0, 5));
-    } catch (error) {
-      console.error("Error fetching cast:", error);
+  // ✅ Filters (you can improve later by adding language field in DB)
+  const filterMovies = (movies) => {
+    let filtered = movies.filter((m) => m.genres.includes("Cars")); // 👈 only Action movies
+
+    switch (filter) {
+      case "hollywood":
+        return filtered.filter(
+          (m) =>
+            m.universe === "Hollywood" ||
+            m.universe === "DC" ||
+            m.universe === "Marvel"
+        );
+      case "bollywood":
+        return filtered.filter((m) => m.universe === "Bollywood");
+      case "korean":
+        return filtered.filter((m) => m.universe === "Korean Cinema");
+      case "all":
+      default:
+        return filtered;
     }
+  };
+
+  function formatDuration(minutes) {
+    if (!minutes) return "N/A";
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h}h ${m}m`;
   }
 
-  const openModal = (movie) => {
-    setSelectedMovie(movie);
-    fetchCast(movie.id);
-  };
-
-  const closeModal = () => {
-    setSelectedMovie(null);
-    setCast([]);
-  };
+  const displayedMovies = filterMovies(movies).slice(0, visibleCount);
 
   return (
-    <div className="bg-black min-h-screen text-white">
-      {/* Hero Section */}
-      <div className="relative w-full h-[70vh] overflow-hidden">
+    <div className="bg-black min-h-screen text-white relative overflow-hidden">
+      {/* Hero */}
+      <div className="relative w-full h-[68vh] md:h-[72vh] overflow-hidden">
         <video
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full object-cover object-center opacity-40"
           autoPlay
           loop
           muted
@@ -62,113 +70,159 @@ export default function CarMovies() {
         >
           <source src="/videos/car2.mp4" type="video/mp4" />
         </video>
-        {/* <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/90 flex flex-col items-center justify-center text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-extrabold text-red-500 drop-shadow-[0_0_15px_#ff0000]">
-            Car Movies
-          </h1>
-          <p className="mt-4 text-lg md:text-xl text-gray-300">
-            Thrilling rides, legendary races & adrenaline-fueled cinema
-          </p>
-        </div> */}
+
+        {/* Soft vignette */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(0,0,0,0) 30%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.95) 100%)",
+          }}
+        />
+
+        {/* Title */}
+        <div className="absolute inset-0 flex items-center justify-center text-center px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9 }}
+            className="max-w-3xl"
+          >
+            <h1 className="text-5xl md:text-7xl font-extrabold text-green-400 drop-shadow-[0_0_18px_#39FF14]">
+              Pedal to the Metal
+            </h1>
+          </motion.div>
+        </div>
       </div>
 
-      {/* Movie Grid */}
-      <div className="p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {movies.map((movie) => (
+      {/* Filters (horror-style buttons, green theme) */}
+      <div className="flex justify-center flex-wrap gap-3 py-6 relative z-10">
+        {["all", "hollywood", "bollywood", "korean"].map((cat) => (
+          <button
+            key={cat}
+            onClick={() => {
+              setFilter(cat);
+              setVisibleCount(10);
+            }}
+            className={`px-4 py-2 rounded-lg border border-green-700 transition-all duration-300 ${
+              filter === cat
+                ? "bg-green-600 text-white shadow-lg shadow-green-500/50"
+                : "hover:bg-green-500/20"
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Grid (horror-style cards, but NEON GREEN hover glow) */}
+      {/* {loading ? (
+        <p className="text-center text-gray-300 text-lg mt-8">
+          Loading rides...
+        </p>
+      ) : ( */}
+      <div className="px-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 pb-12">
+        {displayedMovies.map((movie) => (
           <Tilt key={movie.id} tiltMaxAngleX={10} tiltMaxAngleY={10}>
             <motion.div
-              onClick={() => openModal(movie)}
               whileHover={{
                 scale: 1.05,
+                rotateY: 5,
                 boxShadow:
-                  "0 0 15px #39FF14, 0 0 30px #32CD32, 0 0 45px #00FF00", // neon green glow
+                  "0 0 16px #39FF14, 0 0 28px #00FF00, 0 0 44px #32CD32",
               }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className="rounded-xl overflow-hidden cursor-pointer bg-black text-white"
+              transition={{ type: "spring", stiffness: 280, damping: 20 }}
+              className="rounded-xl overflow-hidden cursor-pointer bg-[#0b0b0b] border border-green-900/40 relative group"
+              onClick={() => setSelectedMovie(movie)}
             >
               <img
-                src={`${IMAGE_BASE}${movie.poster_path}`}
+                src={movie.posterUrl}
                 alt={movie.title}
-                className="w-full h-80 object-cover"
+                className="rounded-xl object-cover transition duration-500 group-hover:shadow-[0_0_25px_#39FF14]"
               />
-              <div className="p-4">
-                <h3 className="text-lg font-bold">{movie.title}</h3>
+              {/* bottom fade/title like horror page */}
+              <div className="absolute bottom-0 w-full bg-black/70 text-center py-2 opacity-0 group-hover:opacity-100 transition">
+                {movie.title}
               </div>
             </motion.div>
           </Tilt>
         ))}
       </div>
 
-      {/* Modal Popup */}
-      {/* Modal Popup */}
+      {/* See More (green theme) */}
+      {visibleCount < filterMovies(movies).length && (
+        <div className="flex justify-center pb-12">
+          <motion.button
+            whileHover={{ scale: 1.1, boxShadow: "0px 0px 25px #39FF14" }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setVisibleCount((prev) => prev + 10)}
+            className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl font-semibold text-white shadow-lg"
+          >
+            See More
+          </motion.button>
+        </div>
+      )}
+
+      {/* Modal (same responsive layout as horror page, green accents) */}
       <AnimatePresence>
         {selectedMovie && (
           <motion.div
-            className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={closeModal}
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            className="fixed inset-0 bg-black/95 z-50 overflow-y-auto"
           >
-            <motion.div
-              className="bg-gray-900 rounded-2xl p-6 w-full max-w-sm sm:max-w-md md:max-w-3xl border-2 border-green-500 shadow-[0_0_20px_#39FF14]"
-              initial={{ scale: 0.7 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.7 }}
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="max-w-5xl mx-auto p-6">
               <button
-                onClick={closeModal}
-                className="absolute top-4 right-4 z-50 text-green-400 hover:text-green-600 text-2xl pointer-events-auto"
+                onClick={() => setSelectedMovie(null)}
+                className="mb-4 px-4 py-2 bg-red-500 text-black rounded"
               >
-                ✖
+                Close
               </button>
 
-              <div className="flex flex-col md:flex-row gap-6">
-                <img
-                  src={`${IMAGE_BASE}${selectedMovie.poster_path}`}
-                  alt={selectedMovie.title}
-                  className="w-full md:w-60 rounded-xl shadow-lg border border-green-500 object-cover"
+              {/* Trailer or Poster */}
+              {selectedMovie.trailerUrl ? (
+                <iframe
+                  src={selectedMovie.trailerUrl.replace("watch?v=", "embed/")}
+                  className="w-full aspect-video rounded-xl mb-4"
+                  allowFullScreen
                 />
-                <div className="flex-1">
-                  <h2 className="text-2xl md:text-3xl font-bold text-green-400 drop-shadow-[0_0_10px_#39FF14]">
-                    {selectedMovie.title}
-                  </h2>
-                  <p className="text-gray-400 mt-2 text-sm md:text-base">
-                    ⭐ {selectedMovie.vote_average.toFixed(1)} | 📅{" "}
-                    {selectedMovie.release_date}
-                  </p>
-                  <p className="mt-4 text-gray-300 text-sm md:text-base">
-                    {selectedMovie.overview}
-                  </p>
+              ) : (
+                <img
+                  src={selectedMovie.posterUrl}
+                  alt={selectedMovie.title}
+                  className="w-full rounded-xl mb-4"
+                />
+              )}
 
-                  <div className="mt-4">
-                    <h3 className="font-semibold text-lg text-green-400 drop-shadow-[0_0_10px_#39FF14]">
-                      Top Cast:
-                    </h3>
-                    <ul className="flex flex-wrap gap-3 text-gray-300 mt-2 text-xs sm:text-sm">
-                      {cast.length > 0 ? (
-                        cast.map((actor) => (
-                          <li key={actor.id}>🎭 {actor.name}</li>
-                        ))
-                      ) : (
-                        <p className="text-sm">Loading...</p>
-                      )}
-                    </ul>
-                  </div>
+              {/* Details */}
+              <h2 className="text-3xl font-bold text-red-400 mb-2">
+                {selectedMovie.title}
+              </h2>
+              <p className="mb-2">{selectedMovie.description}</p>
+              <p className="text-sm text-gray-400">
+                ⭐ {selectedMovie.rating.imdb}/10 MUVII | 📅{" "}
+                {new Date(selectedMovie.releaseDate).getFullYear()} | 🎬{" "}
+                {formatDuration(selectedMovie.duration)}
+              </p>
 
-                  <div className="mt-4">
-                    <h3 className="font-semibold text-lg text-green-400 drop-shadow-[0_0_10px_#39FF14]">
-                      Our Opinion:
-                    </h3>
-                    <p className="text-gray-300 text-sm md:text-base">
-                      A must-watch for car & action lovers! Packed with
-                      adrenaline, stunts, and cinematic thrill.
-                    </p>
+              {/* Carousel */}
+              <h3 className="mt-6 mb-3 text-2xl font-semibold text-red-500">
+                More Action Movies
+              </h3>
+              <div className="flex overflow-x-scroll gap-4 pb-4">
+                {movies.map((m) => (
+                  <div key={m._id} className="min-w-[150px]">
+                    <img
+                      src={m.posterUrl}
+                      alt={m.title}
+                      className="rounded-xl cursor-pointer"
+                      onClick={() => setSelectedMovie(m)}
+                    />
                   </div>
-                </div>
+                ))}
               </div>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
