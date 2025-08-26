@@ -211,7 +211,7 @@ export default function CarMovies() {
                 More Action Movies
               </h3>
               <div className="flex overflow-x-scroll gap-4 pb-4">
-                {movies.map((m) => (
+                {movies.filter((m) => m.genres.includes("Cars")).map((m) => (
                   <div key={m._id} className="min-w-[150px]">
                     <img
                       src={m.posterUrl}
