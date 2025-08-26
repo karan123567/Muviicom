@@ -12,7 +12,6 @@
 //   const [trailerKey, setTrailerKey] = useState(null);
 //   const [filter, setFilter] = useState("all");
 
-
 //   // Fetch comedy movies
 //   useEffect(() => {
 //     const fetchMovies = async () => {
@@ -239,7 +238,6 @@
 //   );
 // }
 
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -268,17 +266,32 @@ export default function ActionMoviesPage() {
 
   // ✅ Filters (you can improve later by adding language field in DB)
   const filterMovies = (movies) => {
-    switch (filter) {
-      case "hollywood":
-        return movies.filter((m) => m.universe === "Marvel" || m.universe === "DC");
-      case "bollywood":
-        return movies.filter((m) => m.universe === "Bollywood");
-      case "korean":
-        return movies.filter((m) => m.universe === "Korean");
-      default:
-        return movies;
-    }
-  };
+  let filtered = movies.filter((m) => m.genres.includes("Action")); // 👈 only Action movies
+
+  switch (filter) {
+    case "hollywood":
+      return filtered.filter(
+        (m) =>
+          m.universe === "Hollywood" ||
+          m.universe === "DC" ||
+          m.universe === "Marvel"
+      );
+    case "bollywood":
+      return filtered.filter((m) => m.universe === "Bollywood");
+    case "korean":
+      return filtered.filter((m) => m.universe === "Korean Cinema");
+      case "all":
+    default:
+      return filtered;
+  }
+};
+
+  function formatDuration(minutes) {
+    if (!minutes) return "N/A";
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h}h ${m}m`;
+  }
 
   const displayedMovies = filterMovies(movies).slice(0, visibleCount);
 
@@ -399,8 +412,9 @@ export default function ActionMoviesPage() {
               </h2>
               <p className="mb-2">{selectedMovie.description}</p>
               <p className="text-sm text-gray-400">
-                ⭐ {selectedMovie.rating.imdb}/10 IMDb | 📅{" "}
-                {new Date(selectedMovie.releaseDate).getFullYear()}
+                ⭐ {selectedMovie.rating.imdb}/10 MUVII | 📅{" "}
+                {new Date(selectedMovie.releaseDate).getFullYear()} | 🎬{" "}
+                {formatDuration(selectedMovie.duration)}
               </p>
 
               {/* Carousel */}
@@ -426,4 +440,3 @@ export default function ActionMoviesPage() {
     </div>
   );
 }
-
