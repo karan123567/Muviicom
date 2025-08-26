@@ -175,7 +175,7 @@ export default function CarMovies() {
             <div className="max-w-5xl mx-auto p-6">
               <button
                 onClick={() => setSelectedMovie(null)}
-                className="mb-4 px-4 py-2 bg-red-500 text-black rounded"
+                className="mb-4 px-4 py-2 bg-green-500 text-black rounded"
               >
                 Close
               </button>
@@ -196,7 +196,7 @@ export default function CarMovies() {
               )}
 
               {/* Details */}
-              <h2 className="text-3xl font-bold text-red-400 mb-2">
+              <h2 className="text-3xl font-bold text-green-400 mb-2">
                 {selectedMovie.title}
               </h2>
               <p className="mb-2">{selectedMovie.description}</p>
@@ -207,7 +207,7 @@ export default function CarMovies() {
               </p>
 
               {/* Carousel */}
-              <h3 className="mt-6 mb-3 text-2xl font-semibold text-red-500">
+              <h3 className="mt-6 mb-3 text-2xl font-semibold text-green-500">
                 More Action Movies
               </h3>
               <div className="flex overflow-x-scroll gap-4 pb-4">
