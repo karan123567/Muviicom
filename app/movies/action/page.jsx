@@ -269,18 +269,20 @@ export default function ActionMoviesPage() {
   let filtered = movies.filter((m) => m.genres.includes("Action")); // 👈 only Action movies
 
   switch (filter) {
-    case "hollywood":
+    case "Hollywood":
       return filtered.filter(
         (m) =>
           m.universe === "Hollywood" ||
           m.universe === "DC" ||
           m.universe === "Marvel"
       );
-    case "bollywood":
+    case "Bollywood":
       return filtered.filter((m) => m.universe === "Bollywood");
-    case "korean":
+    case "Tollywood":
+      return filtered.filter((m) => m.universe === "Tollywood");  
+    case "Korean":
       return filtered.filter((m) => m.universe === "Korean Cinema");
-      case "all":
+      case "All":
     default:
       return filtered;
   }
@@ -315,12 +317,12 @@ export default function ActionMoviesPage() {
 
       {/* Filters */}
       <div className="flex justify-center flex-wrap gap-2 py-6">
-        {["all", "hollywood", "bollywood", "korean"].map((cat) => (
+        {["All", "Hollywood", "Bollywood", "Korean", "Tollywood"].map((cat) => (
           <button
             key={cat}
             onClick={() => {
               setFilter(cat);
-              setVisibleCount(10);
+              setVisibleCount(12);
             }}
             className={`capitalize px-4 py-2 rounded-lg border border-red-500 transition-all ${
               filter === cat
@@ -334,7 +336,7 @@ export default function ActionMoviesPage() {
       </div>
 
       {/* Movie Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 px-6 pb-20 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 px-6 pb-12 gap-6">
         {displayedMovies.map((movie) => (
           <Tilt key={movie._id} tiltMaxAngleX={10} tiltMaxAngleY={10}>
             <motion.div
@@ -344,14 +346,14 @@ export default function ActionMoviesPage() {
                 boxShadow: "0 0 16px #FF0000, 0 0 28px #8B0000",
               }}
               transition={{ type: "spring", stiffness: 280, damping: 20 }}
-              className="rounded-xl overflow-hidden cursor-pointer bg-[#0b0b0b] border border-red-900/40 shadow-[0_0_8px_rgba(255,0,0,0.25)] group relative"
+              className="rounded-xl overflow-hidden cursor-pointer border border-red-900/40 shadow-[0_0_8px_rgba(255,0,0,0.25)] group relative"
               onClick={() => setSelectedMovie(movie)}
             >
               <img
                 src={movie.posterUrl}
                 alt={movie.title}
                 className="rounded-xl object-cover transition duration-500"
-              />"
+              />
             
               <div className="absolute bottom-0 w-full bg-black/70 text-center py-2 opacity-0 group-hover:opacity-100 transition">
                 {movie.title}
@@ -363,11 +365,11 @@ export default function ActionMoviesPage() {
 
       {/* See More */}
       {visibleCount < filterMovies(movies).length && (
-        <div className="flex justify-start px-6 pb-12">
+        <div className="flex justify-center px-6 pb-12">
           <motion.button
             whileHover={{ scale: 1.1, boxShadow: "0px 0px 25px #ff0000" }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setVisibleCount((prev) => prev + 10)}
+            onClick={() => setVisibleCount(filterMovies(movies).length)}
             className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-600 rounded-xl font-semibold"
           >
             See More

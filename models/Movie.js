@@ -17,6 +17,12 @@ const movieSchema = new mongoose.Schema({
   },
   moods: [{ type: String }], // ex: ["chill", "thrilling", "emotional"]
   isUnderrated: { type: Boolean, default: false }, 
+  cast: [
+    {
+      name: { type: String }, // Actor Name
+      role: { type: String },                 // Character Played
+    }
+  ],
   createdAt: { type: Date, default: Date.now }
 });
 
