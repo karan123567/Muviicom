@@ -103,3 +103,15 @@
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
+
+
+.movie-poster {
+  width: 300px; /* Set your desired width */
+  height: 450px; /* Set your desired height */
+  object-fit: cover;
+}
+
+.movie-container {
+  width: 300px; /* Match the image width */
+  height: 450px; /* Match the image height */
+}
