@@ -102,7 +102,7 @@ export default function CarMovies() {
             key={cat}
             onClick={() => {
               setFilter(cat);
-              setVisibleCount(10);
+              setVisibleCount(8);
             }}
             className={`px-4 py-2 rounded-lg border border-green-700 transition-all duration-300 ${
               filter === cat
@@ -121,7 +121,7 @@ export default function CarMovies() {
           Loading rides...
         </p>
       ) : ( */}
-      <div className="px-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 pb-12">
+      <div className="px-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 pb-12">
         {displayedMovies.map((movie) => (
           <Tilt key={movie.id} tiltMaxAngleX={10} tiltMaxAngleY={10}>
             <motion.div

@@ -299,11 +299,11 @@ export default function HorrorMovies() {
 
               {/* Carousel */}
               <h3 className="mt-6 mb-3 text-2xl font-semibold text-red-700">
-                More Action Movies
+                More Horror Movies
               </h3>
               <div className="flex overflow-x-scroll gap-4 pb-4">
                 {movies
-                  .filter((m) => m.genres.includes("Cars"))
+                  .filter((m) => m.genres.includes("Horror"))
                   .map((m) => (
                     <div key={m._id} className="min-w-[150px]">
                       <img
